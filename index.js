@@ -3,7 +3,6 @@ keepAlive();
 
 const path = require("path");
 const { Client, GatewayIntentBits } = require("discord.js");
-const { WebcastPushConnection } = require("tiktok-live-connector");
 const {
   joinVoiceChannel,
   createAudioPlayer,
@@ -14,9 +13,6 @@ const {
 
 require('dotenv').config();
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const CHANNEL_ID = "1387556067449372672";
-const TIKTOK_USERNAME = "uparty_piotr";
-
 const client = new Client({
   intents: [ GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -25,94 +21,6 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildVoiceStates ],
 });
-
-let alreadyAnnounced = false;
-let tiktok;
-
-client.once("ready", async () => {
-  console.log(`Zalogowano jako ${client.user.tag}`);
-
-  const channel = await client.channels.fetch(CHANNEL_ID);
-  startTikTokConnection();
-
-  async function startTikTokConnection() {
-    tiktok = new WebcastPushConnection(TIKTOK_USERNAME);
-
-    try {
-      await tiktok.connect();
-      console.log("🔌 Połączono z TikTokiem");
-
-      tiktok.once("roomUser", (data) => {
-        console.log("roomUser data:", data);
-        if (data.viewerCount > 0 && !alreadyAnnounced) {
-          const channel = client.channels.cache.get(CHANNEL_ID);
-          if (channel) {
-            channel.send(`<@&1387749656146219139> Dziś Napierdalanie\n  https://tiktok.com/@${TIKTOK_USERNAME}/live \nhttps://www.youtube.com/@Uparty_Piotr \nhttps://trovo.live/s/Uparty_Piotr?roomType=1 \nhttps://kick.com/blackroseofdeath/about \nhttps://m.twitch.tv/blackroseofdeath/home\n\n\n`);
-            alreadyAnnounced = true;
-          } else {
-            console.log("Nie znaleziono kanału Discord o podanym ID.");
-          }
-        } else {
-          console.log("Streamer nie jest na żywo lub już powiadomiono.");
-        }
-      });
-
-      tiktok.on("streamStart", async () => {
-        console.log("Stream started!");
-        if (!alreadyAnnounced) {
-          const channel = await client.channels.fetch(CHANNEL_ID);
-          channel.send(
-            ` <@&1387749656146219139> JAZDA Z KURWAMI \nhttps://tiktok.com/@${TIKTOK_USERNAME}/live \n https://www.youtube.com/@Uparty_Piotr \nhttps://trovo.live/s/Uparty_Piotr?roomType=1 \nhttps://kick.com/blackroseofdeath/about \nhttps://m.twitch.tv/blackroseofdeath/home\n            `
-          );
-          alreadyAnnounced = true;
-        }
-      });
-
-      tiktok.on("streamEnd", () => {
-        console.log("Stream ended!");
-        alreadyAnnounced = false;
-        channel.send(" <@&1387749656146219139> no i chuj xdddddddddddddddd")
-      });
-
-      tiktok.on("disconnected", () => {
-        console.log("❌ Rozłączono z TikTokiem");
-      });
-
-      tiktok.on("error", (err) => {
-        console.error("Błąd TikTokLive:", err);
-      });
-    } catch (error) {
-      if (error.name === "UserOfflineError") {
-        console.log("Streamer jest offline. Spróbuję ponownie za 1 minutę...");
-        alreadyAnnounced = false;
-        setTimeout(startTikTokConnection, 60000);
-      } else {
-        console.error("Inny błąd połączenia TikTok:", error);
-        setTimeout(startTikTokConnection, 60000);
-      }
-    }
-  }
-});
-
-async function applyVoiceTimeout(member, durationMs = 60000) {
-  try {
-    await member.voice.setMute(true, "Głosowanie – timeout");
-    await member.voice.setDeaf(true, "Głosowanie – timeout");
-
-    setTimeout(async () => {
-      try {
-        await member.voice.setMute(false, "Koniec timeoutu");
-        await member.voice.setDeaf(false, "Koniec timeoutu");
-      } catch (e) {
-        console.error("Nie można cofnąć timeoutu:", e.message);
-      }
-    }, durationMs);
-
-    await member.send(`🔇 Otrzymałeś timeout głosowy na ${durationMs / 1000} sekund.`);
-  } catch (err) {
-    console.error("Błąd przy nakładaniu timeoutu:", err.message);
-  }
-}
 
 client.login(DISCORD_TOKEN);
 
