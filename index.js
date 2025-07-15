@@ -261,8 +261,7 @@ client.on("messageCreate", async (message) => {
       if (conn) conn.destroy();
     });
   }
-});
-// Obsługa #brygada
+
   if (message.content === "#Gosia") {
     const voiceChannel = message.member.voice.channel;
 
@@ -289,6 +288,8 @@ client.on("messageCreate", async (message) => {
       if (conn) conn.destroy();
     });
   }
+});
+
 ;
 
 
