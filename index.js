@@ -222,34 +222,6 @@ client.on("messageCreate", async (message) => {
       if (conn) conn.destroy();
     });
   }
-  const CHANNEL_ID = "715904416556777558";
-  setInterval(async () => {
-  const guilds = client.guilds.cache;
-
-  guilds.forEach(async (guild) => {
-    const members = await guild.members.fetch();
-
-    members.forEach(async (member) => {
-      if (
-        member.voice.channel && // user jest na VC
-        !member.user.bot // nie bot
-      ) {
-        const chance = Math.floor(Math.random() * 100000); // 0 - 999
-        if (chance === 0) {
-          try {
-            await member.voice.disconnect("Losowy wyrzut z szansą 1/1000");
-            const channel = client.channels.cache.get(CHANNEL_ID);
-            await channel.send(`💣 Rozjebano ${member.user.tag}`);
-            console.log(`💣 Rozjebano ${member.user.tag}`);
-          } catch (err) {
-            console.error(`❌ Błąd przy wyrzucaniu ${member.user.tag}:`, err.message);
-          }
-        }
-      }
-    });
-  });
-}, 1000); 
-
 });
 
 ;
