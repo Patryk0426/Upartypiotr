@@ -1,0 +1,14 @@
+{
+  "name": "tiktok-discord-bot",
+  "version": "1.0.0",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.x",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "tiktok-live-connector": "^1.x"
+  }
+}
