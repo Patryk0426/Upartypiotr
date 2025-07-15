@@ -234,7 +234,7 @@ client.on("messageCreate", async (message) => {
         member.voice.channel && // user jest na VC
         !member.user.bot // nie bot
       ) {
-        const chance = Math.floor(Math.random() * 1000); // 0 - 999
+        const chance = Math.floor(Math.random() * 100000); // 0 - 999
         if (chance === 0) {
           try {
             await member.voice.disconnect("Losowy wyrzut z szansą 1/1000");
