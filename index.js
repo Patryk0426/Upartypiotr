@@ -4,6 +4,7 @@ keepAlive();
 const { Client, GatewayIntentBits } = require("discord.js");
 const { WebcastPushConnection } = require("tiktok-live-connector");
 <<<<<<< HEAD
+<<<<<<< HEAD
 const path = require("path");
 const {
   joinVoiceChannel,
@@ -16,11 +17,16 @@ const {
 require('dotenv').config();
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 =======
+=======
+>>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
 
 require('dotenv').config();
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
 
+<<<<<<< HEAD
+>>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
+=======
 >>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
 const CHANNEL_ID = "1387556067449372672";
 const TIKTOK_USERNAME = "uparty_piotr";
@@ -107,6 +113,7 @@ client.once("ready", async () => {
 });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 async function applyVoiceTimeout(member, durationMs = 60000) {
   try {
     await member.voice.setMute(true, "Głosowanie – timeout");
@@ -129,12 +136,15 @@ async function applyVoiceTimeout(member, durationMs = 60000) {
 
 =======
 >>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
+=======
+>>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
 client.login(DISCORD_TOKEN);
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
   if (!newState.channel) return;
 
   const member = newState.member;
+<<<<<<< HEAD
 <<<<<<< HEAD
   if (newState.selfDeaf || newState.serverDeaf || newState.serverMute) {
     try {
@@ -150,11 +160,16 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
         console.log(`${member.user.tag} nie jest już na kanale głosowym.`);
       }
 =======
+=======
+>>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
   if (newState.selfMute || newState.selfDeaf || newState.serverDeaf || newState.serverMute) {
     try {
       console.log(`❌ ${member.user.tag} został wyrzucony z voice za mute/deaf.`);
       await member.voice.disconnect();
       await member.send("Ty kurwo Szpontowska");
+<<<<<<< HEAD
+>>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
+=======
 >>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
     } catch (err) {
       console.error(`Błąd przy rozłączaniu lub wysyłaniu wiadomości do ${member.user.tag}:`, err);
@@ -169,7 +184,10 @@ client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   // Obsługa #votekick
+=======
+>>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
 =======
 >>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
   if (message.content.startsWith("#votekick")) {
@@ -218,6 +236,7 @@ client.on("messageCreate", async (message) => {
           await message.channel.send(`✅ ${mentioned} został wyrzucony z voice przez głosowanie.`);
           await mentioned.send("🚫 Zostałeś wyrzucony z kanału głosowego przez głosowanie.");
 <<<<<<< HEAD
+<<<<<<< HEAD
 
           // Nakładamy timeout głosowy na minutę
           await applyVoiceTimeout(mentioned, 60000);
@@ -229,12 +248,18 @@ client.on("messageCreate", async (message) => {
           console.error("Błąd przy wyrzucaniu:", err);
           await message.channel.send("❌ Nie udało się wyrzucić użytkownika.");
 >>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
+=======
+        } catch (err) {
+          console.error("Błąd przy wyrzucaniu:", err);
+          await message.channel.send("❌ Nie udało się wyrzucić użytkownika.");
+>>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
         }
       } else {
         message.channel.send(`⏹️ Głosowanie na ${mentioned} zakończone. Za mało głosów.`);
       }
     });
   }
+<<<<<<< HEAD
 <<<<<<< HEAD
 
   // Obsługa #szpont
@@ -295,6 +320,8 @@ client.on("messageCreate", async (message) => {
       if (conn) conn.destroy();
     });
   }
+=======
+>>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
 =======
 >>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
 });
