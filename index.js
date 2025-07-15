@@ -295,7 +295,7 @@ client.on("messageCreate", async (message) => {
       return message.reply("🎧 Musisz być na kanale głosowym.");
     }
 
-    const soundPath = path.join(__dirname, "sounds", "princepolo.mp3");
+    const soundPath = path.join(__dirname, "sounds", "pricepolo.mp3");
 
     const connection = joinVoiceChannel({
       channelId: voiceChannel.id,
