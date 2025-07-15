@@ -1,11 +1,9 @@
 const keepAlive = require("./keepalive");
 keepAlive();
 
+const path = require("path");
 const { Client, GatewayIntentBits } = require("discord.js");
 const { WebcastPushConnection } = require("tiktok-live-connector");
-<<<<<<< HEAD
-<<<<<<< HEAD
-const path = require("path");
 const {
   joinVoiceChannel,
   createAudioPlayer,
@@ -16,18 +14,6 @@ const {
 
 require('dotenv').config();
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-=======
-=======
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
-
-require('dotenv').config();
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-
-
-<<<<<<< HEAD
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
-=======
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
 const CHANNEL_ID = "1387556067449372672";
 const TIKTOK_USERNAME = "uparty_piotr";
 
@@ -61,10 +47,7 @@ client.once("ready", async () => {
         if (data.viewerCount > 0 && !alreadyAnnounced) {
           const channel = client.channels.cache.get(CHANNEL_ID);
           if (channel) {
-            channel.send(`<@&1387749656146219139> Dziś Napierdalanie\n  https://tiktok.com/@${TIKTOK_USERNAME}/live \nhttps://www.youtube.com/@Uparty_Piotr \nhttps://trovo.live/s/Uparty_Piotr?roomType=1 \nhttps://kick.com/blackroseofdeath/about \nhttps://m.twitch.tv/blackroseofdeath/home
-
-
-`);
+            channel.send(`<@&1387749656146219139> Dziś Napierdalanie\n  https://tiktok.com/@${TIKTOK_USERNAME}/live \nhttps://www.youtube.com/@Uparty_Piotr \nhttps://trovo.live/s/Uparty_Piotr?roomType=1 \nhttps://kick.com/blackroseofdeath/about \nhttps://m.twitch.tv/blackroseofdeath/home\n\n\n`);
             alreadyAnnounced = true;
           } else {
             console.log("Nie znaleziono kanału Discord o podanym ID.");
@@ -79,8 +62,7 @@ client.once("ready", async () => {
         if (!alreadyAnnounced) {
           const channel = await client.channels.fetch(CHANNEL_ID);
           channel.send(
-            ` <@&1387749656146219139> JAZDA Z KURWAMI \nhttps://tiktok.com/@${TIKTOK_USERNAME}/live \n https://www.youtube.com/@Uparty_Piotr \nhttps://trovo.live/s/Uparty_Piotr?roomType=1 \nhttps://kick.com/blackroseofdeath/about \nhttps://m.twitch.tv/blackroseofdeath/home
-            `
+            ` <@&1387749656146219139> JAZDA Z KURWAMI \nhttps://tiktok.com/@${TIKTOK_USERNAME}/live \n https://www.youtube.com/@Uparty_Piotr \nhttps://trovo.live/s/Uparty_Piotr?roomType=1 \nhttps://kick.com/blackroseofdeath/about \nhttps://m.twitch.tv/blackroseofdeath/home\n            `
           );
           alreadyAnnounced = true;
         }
@@ -112,8 +94,6 @@ client.once("ready", async () => {
   }
 });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 async function applyVoiceTimeout(member, durationMs = 60000) {
   try {
     await member.voice.setMute(true, "Głosowanie – timeout");
@@ -134,19 +114,13 @@ async function applyVoiceTimeout(member, durationMs = 60000) {
   }
 }
 
-=======
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
-=======
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
 client.login(DISCORD_TOKEN);
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
   if (!newState.channel) return;
 
   const member = newState.member;
-<<<<<<< HEAD
-<<<<<<< HEAD
-  if (newState.selfDeaf || newState.serverDeaf || newState.serverMute) {
+  if (newState.selfMute || newState.selfDeaf || newState.serverDeaf || newState.serverMute) {
     try {
       if (member.voice.channel) {
         if (member.user.id !== client.user.id) { // NIE WYRZUCAJ BOTA
@@ -159,37 +133,18 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
       } else {
         console.log(`${member.user.tag} nie jest już na kanale głosowym.`);
       }
-=======
-=======
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
-  if (newState.selfMute || newState.selfDeaf || newState.serverDeaf || newState.serverMute) {
-    try {
-      console.log(`❌ ${member.user.tag} został wyrzucony z voice za mute/deaf.`);
-      await member.voice.disconnect();
-      await member.send("Ty kurwo Szpontowska");
-<<<<<<< HEAD
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
-=======
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
     } catch (err) {
       console.error(`Błąd przy rozłączaniu lub wysyłaniu wiadomości do ${member.user.tag}:`, err);
     }
   }
 });
 
-
 const voteKickMap = new Map(); // mapa aktywnych głosowań
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   // Obsługa #votekick
-=======
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
-=======
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
   if (message.content.startsWith("#votekick")) {
     const mentioned = message.mentions.members.first();
     if (!mentioned) {
@@ -235,32 +190,18 @@ client.on("messageCreate", async (message) => {
           await mentioned.voice.disconnect();
           await message.channel.send(`✅ ${mentioned} został wyrzucony z voice przez głosowanie.`);
           await mentioned.send("🚫 Zostałeś wyrzucony z kanału głosowego przez głosowanie.");
-<<<<<<< HEAD
-<<<<<<< HEAD
 
           // Nakładamy timeout głosowy na minutę
           await applyVoiceTimeout(mentioned, 60000);
         } catch (err) {
           console.error("Błąd przy wyrzucaniu lub timeoutowaniu:", err);
           await message.channel.send("❌ Nie udało się wyrzucić lub wyciszyć użytkownika.");
-=======
-        } catch (err) {
-          console.error("Błąd przy wyrzucaniu:", err);
-          await message.channel.send("❌ Nie udało się wyrzucić użytkownika.");
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
-=======
-        } catch (err) {
-          console.error("Błąd przy wyrzucaniu:", err);
-          await message.channel.send("❌ Nie udało się wyrzucić użytkownika.");
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
         }
       } else {
         message.channel.send(`⏹️ Głosowanie na ${mentioned} zakończone. Za mało głosów.`);
       }
     });
   }
-<<<<<<< HEAD
-<<<<<<< HEAD
 
   // Obsługa #szpont
   if (message.content === "#szpont") {
@@ -320,10 +261,6 @@ client.on("messageCreate", async (message) => {
       if (conn) conn.destroy();
     });
   }
-=======
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
-=======
->>>>>>> 4a995201cbf49b4b2e2b4eebdcd4dd0909b110dd
 });
 
 
