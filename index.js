@@ -262,6 +262,35 @@ client.on("messageCreate", async (message) => {
     });
   }
 });
+// Obsługa #brygada
+  if (message.content === "#Gosia") {
+    const voiceChannel = message.member.voice.channel;
+
+    if (!voiceChannel) {
+      return message.reply("🎧 Musisz być na kanale głosowym.");
+    }
+
+    const soundPath = path.join(__dirname, "sounds", "gosia.mp3");
+
+    const connection = joinVoiceChannel({
+      channelId: voiceChannel.id,
+      guildId: voiceChannel.guild.id,
+      adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+    });
+
+    const player = createAudioPlayer();
+    const resource = createAudioResource(soundPath);
+
+    player.play(resource);
+    connection.subscribe(player);
+
+    player.on(AudioPlayerStatus.Idle, () => {
+      const conn = getVoiceConnection(voiceChannel.guild.id);
+      if (conn) conn.destroy();
+    });
+  }
+;
+
 
 
 
