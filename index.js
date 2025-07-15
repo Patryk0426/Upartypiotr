@@ -10,6 +10,7 @@ const {
   AudioPlayerStatus,
   getVoiceConnection,
 } = require("@discordjs/voice");
+const { channel } = require("diagnostics_channel");
 
 require('dotenv').config();
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -34,7 +35,6 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
         if (member.user.id !== client.user.id) { // NIE WYRZUCAJ BOTA
           console.log(`❌ ${member.user.tag} został wyrzucony z voice za mute/deaf.`);
           await member.voice.disconnect();
-          await member.send("Ty kurwo Szpontowska");
         } else {
           console.log("Bot nie jest wyrzucany z voice za mute/deaf.");
         }
@@ -69,7 +69,7 @@ client.on("messageCreate", async (message) => {
     }
 
     const voteMessage = await message.channel.send(
-      `🗳️ Głosowanie nad wyrzuceniem ${mentioned} z kanału głosowego. Potrzeba **3 głosów**.\nReaguj 👍, by zagłosować. Masz 60 sekund!`
+      `Głosowanie nad wyrzuceniem jebanego cwela : ${mentioned} z vc. 4 reakcje i wypierdalam tego cwela`
     );
 
     await voteMessage.react("👍");
@@ -222,6 +222,34 @@ client.on("messageCreate", async (message) => {
       if (conn) conn.destroy();
     });
   }
+  const CHANNEL_ID = "715904416556777558";
+  setInterval(async () => {
+  const guilds = client.guilds.cache;
+
+  guilds.forEach(async (guild) => {
+    const members = await guild.members.fetch();
+
+    members.forEach(async (member) => {
+      if (
+        member.voice.channel && // user jest na VC
+        !member.user.bot // nie bot
+      ) {
+        const chance = Math.floor(Math.random() * 1000); // 0 - 999
+        if (chance === 0) {
+          try {
+            await member.voice.disconnect("Losowy wyrzut z szansą 1/1000");
+            const channel = client.channels.cache.get(CHANNEL_ID);
+            await channel.send(`💣 Rozjebano ${member.user.tag}`);
+            console.log(`💣 Rozjebano ${member.user.tag}`);
+          } catch (err) {
+            console.error(`❌ Błąd przy wyrzucaniu ${member.user.tag}:`, err.message);
+          }
+        }
+      }
+    });
+  });
+}, 1000); 
+
 });
 
 ;
