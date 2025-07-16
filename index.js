@@ -49,6 +49,35 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
 const voteKickMap = new Map(); // mapa aktywnych głosowań
 
+// --- FUNKCJA DO ODTWARZANIA DŹWIĘKU ---
+async function playSound(message, fileName) {
+  const voiceChannel = message.member.voice.channel;
+  if (!voiceChannel) {
+    return message.reply("🎧 Musisz być na kanale głosowym.");
+  }
+  const soundPath = path.join(__dirname, "sounds", fileName);
+  const connection = joinVoiceChannel({
+    channelId: voiceChannel.id,
+    guildId: voiceChannel.guild.id,
+    adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+  });
+  const player = createAudioPlayer();
+  const resource = createAudioResource(soundPath);
+  player.play(resource);
+  connection.subscribe(player);
+  player.on(AudioPlayerStatus.Idle, () => {
+    const conn = getVoiceConnection(voiceChannel.guild.id);
+    if (conn) conn.destroy();
+  });
+}
+
+const soundCommands = {
+  "#brygada": "brygada.mp3",
+  "#gosia": "Gosia.mp3",
+  "#princepolo": "pricepolo.mp3"
+};
+const szpontSounds = Array.from({length: 10}, (_, i) => `${i+1}.mp3`);
+
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
@@ -113,120 +142,38 @@ client.on("messageCreate", async (message) => {
 
   // Obsługa #szpont
   if (message.content === "#szpont") {
-    const voiceChannel = message.member.voice.channel;
-
-    if (!voiceChannel) {
-      return message.reply("🎧 Musisz być na kanale głosowym.");
-    }
-
-    // Losuj plik mp3 z folderu sounds
-    const sounds = Array.from({length: 10}, (_, i) => `${i+1}.mp3`);
-    const randomSound = sounds[Math.floor(Math.random() * sounds.length)];
-    const soundPath = path.join(__dirname, "sounds", randomSound);
-
-    const connection = joinVoiceChannel({
-      channelId: voiceChannel.id,
-      guildId: voiceChannel.guild.id,
-      adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-    });
-
-    const player = createAudioPlayer();
-    const resource = createAudioResource(soundPath);
-
-    player.play(resource);
-    connection.subscribe(player);
-
-    player.on(AudioPlayerStatus.Idle, () => {
-      const conn = getVoiceConnection(voiceChannel.guild.id);
-      if (conn) conn.destroy();
-    });
+    const randomSound = szpontSounds[Math.floor(Math.random() * szpontSounds.length)];
+    return playSound(message, randomSound);
   }
 
-  // Obsługa #brygada
-  if (message.content === "#brygada") {
-    const voiceChannel = message.member.voice.channel;
-
-    if (!voiceChannel) {
-      return message.reply("🎧 Musisz być na kanale głosowym.");
-    }
-
-    const soundPath = path.join(__dirname, "sounds", "brygada.mp3");
-
-    const connection = joinVoiceChannel({
-      channelId: voiceChannel.id,
-      guildId: voiceChannel.guild.id,
-      adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-    });
-
-    const player = createAudioPlayer();
-    const resource = createAudioResource(soundPath);
-
-    player.play(resource);
-    connection.subscribe(player);
-
-    player.on(AudioPlayerStatus.Idle, () => {
-      const conn = getVoiceConnection(voiceChannel.guild.id);
-      if (conn) conn.destroy();
-    });
-  }
-
-  if (message.content === "#gosia") {
-    const voiceChannel = message.member.voice.channel;
-
-    if (!voiceChannel) {
-      return message.reply("🎧 Musisz być na kanale głosowym.");
-    }
-
-    const soundPath = path.join(__dirname, "sounds", "gosia.mp3");
-
-    const connection = joinVoiceChannel({
-      channelId: voiceChannel.id,
-      guildId: voiceChannel.guild.id,
-      adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-    });
-
-    const player = createAudioPlayer();
-    const resource = createAudioResource(soundPath);
-
-    player.play(resource);
-    connection.subscribe(player);
-
-    player.on(AudioPlayerStatus.Idle, () => {
-      const conn = getVoiceConnection(voiceChannel.guild.id);
-      if (conn) conn.destroy();
-    });
-  }
-  if (message.content === "#princepolo") {
-    const voiceChannel = message.member.voice.channel;
-
-    if (!voiceChannel) {
-      return message.reply("🎧 Musisz być na kanale głosowym.");
-    }
-
-    const soundPath = path.join(__dirname, "sounds", "pricepolo.mp3");
-
-    const connection = joinVoiceChannel({
-      channelId: voiceChannel.id,
-      guildId: voiceChannel.guild.id,
-      adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-    });
-
-    const player = createAudioPlayer();
-    const resource = createAudioResource(soundPath);
-
-    player.play(resource);
-    connection.subscribe(player);
-
-    player.on(AudioPlayerStatus.Idle, () => {
-      const conn = getVoiceConnection(voiceChannel.guild.id);
-      if (conn) conn.destroy();
-    });
+  // Obsługa pozostałych dźwięków przez mapę
+  if (soundCommands[message.content]) {
+    return playSound(message, soundCommands[message.content]);
   }
 });
 
-;
-
-
-
-
+const CHANNEL_ID = "715904416556777558";
+setInterval(() => {
+  client.guilds.cache.forEach(guild => {
+    guild.members.fetch().then(members => {
+      members.forEach(member => {
+        if (
+          member.voice.channel && // user jest na VC
+          !member.user.bot // nie bot
+        ) {
+          const chance = Math.floor(Math.random() * 1000); // 0 - 999
+          if (chance === 0) {
+            member.voice.disconnect("Losowy wyrzut z szansą 1/1000").then(() => {
+              const channel = client.channels.cache.get(CHANNEL_ID);
+              if (channel) channel.send(`💣 Rozjebano ${member.user.tag}`);
+              console.log(`💣 Rozjebano ${member.user.tag}`);
+            }).catch(err => {
+              console.error(`❌ Błąd przy wyrzucaniu ${member.user.tag}:`, err.message);
+            });
+          }
+        }
+      });
+    });
+  });
+}, 1000); 
 
