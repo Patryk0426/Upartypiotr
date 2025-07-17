@@ -73,18 +73,11 @@ async function playSound(message, fileName) {
 const soundCommands = {
   "#brygada": "brygada.mp3",
   "#gosia": "Gosia.mp3",
-  "#princepolo": "pricepolo.mp3"
+  "#princepolo": "pricepolo.mp3",
+  "#goat" : "niga.mp3"
 };
 const szpontSounds = Array.from({length: 10}, (_, i) => `${i+1}.mp3`);
-if (message.content === "#szpont") {
-    const randomSound = szpontSounds[Math.floor(Math.random() * szpontSounds.length)];
-    return playSound(message, randomSound);
-  }
 
-
- if (soundCommands[message.content]) {
-    return playSound(message, soundCommands[message.content]);
-  }
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
@@ -146,6 +139,15 @@ client.on("messageCreate", async (message) => {
         message.channel.send(`⏹️ Głosowanie na ${mentioned} zakończone. Za mało głosów.`);
       }
     });
+  }
+  if (message.content === "#szpont") {
+    const randomSound = szpontSounds[Math.floor(Math.random() * szpontSounds.length)];
+    return playSound(message, randomSound);
+  }
+
+
+ if (soundCommands[message.content]) {
+    return playSound(message, soundCommands[message.content]);
   }
 });
 
