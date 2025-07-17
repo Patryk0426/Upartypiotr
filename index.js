@@ -29,10 +29,10 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   if (!newState.channel) return;
 
   const member = newState.member;
-  if (newState.selfMute || newState.selfDeaf || newState.serverDeaf || newState.serverMute) {
+  if (newState.selfMute || newState.selfDeaf) {
     try {
       if (member.voice.channel) {
-        if (member.user.id !== client.user.id) { // NIE WYRZUCAJ BOTA
+        if (member.user.id !== client.user.id) {
           console.log(`❌ ${member.user.tag} został wyrzucony z voice za mute/deaf.`);
           await member.voice.disconnect();
         } else {
@@ -47,9 +47,8 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   }
 });
 
-const voteKickMap = new Map(); // mapa aktywnych głosowań
+const voteKickMap = new Map();
 
-// --- FUNKCJA DO ODTWARZANIA DŹWIĘKU ---
 async function playSound(message, fileName) {
   const voiceChannel = message.member.voice.channel;
   if (!voiceChannel) {
@@ -77,11 +76,20 @@ const soundCommands = {
   "#princepolo": "pricepolo.mp3"
 };
 const szpontSounds = Array.from({length: 10}, (_, i) => `${i+1}.mp3`);
+if (message.content === "#szpont") {
+    const randomSound = szpontSounds[Math.floor(Math.random() * szpontSounds.length)];
+    return playSound(message, randomSound);
+  }
+
+
+ if (soundCommands[message.content]) {
+    return playSound(message, soundCommands[message.content]);
+  }
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
-  // Obsługa #votekick
+
   if (message.content.startsWith("#votekick")) {
     const mentioned = message.mentions.members.first();
     if (!mentioned) {
@@ -103,13 +111,13 @@ client.on("messageCreate", async (message) => {
 
     await voteMessage.react("👍");
 
-    const voters = new Set(); // zbiór unikalnych głosujących
+    const voters = new Set();
 
-    voteKickMap.set(mentioned.id, true); // zablokuj powtórne głosowanie
+    voteKickMap.set(mentioned.id, true);
 
     const collector = voteMessage.createReactionCollector({
       filter: (reaction, user) => reaction.emoji.name === "👍" && !user.bot,
-      time: 60000, // 1 minuta
+      time: 60000,
     });
 
     collector.on("collect", (reaction, user) => {
@@ -128,8 +136,8 @@ client.on("messageCreate", async (message) => {
           await message.channel.send(`✅ ${mentioned} został wyrzucony z voice przez głosowanie.`);
           await mentioned.send("🚫 Zostałeś wyrzucony z kanału głosowego przez głosowanie.");
 
-          // Nakładamy timeout głosowy na minutę
-          await applyVoiceTimeout(mentioned, 60000);
+        
+    
         } catch (err) {
           console.error("Błąd przy wyrzucaniu lub timeoutowaniu:", err);
           await message.channel.send("❌ Nie udało się wyrzucić lub wyciszyć użytkownika.");
@@ -139,41 +147,6 @@ client.on("messageCreate", async (message) => {
       }
     });
   }
-
-  // Obsługa #szpont
-  if (message.content === "#szpont") {
-    const randomSound = szpontSounds[Math.floor(Math.random() * szpontSounds.length)];
-    return playSound(message, randomSound);
-  }
-
-  // Obsługa pozostałych dźwięków przez mapę
-  if (soundCommands[message.content]) {
-    return playSound(message, soundCommands[message.content]);
-  }
 });
 
-const CHANNEL_ID = "715904416556777558";
-setInterval(() => {
-  client.guilds.cache.forEach(guild => {
-    guild.members.fetch().then(members => {
-      members.forEach(member => {
-        if (
-          member.voice.channel && // user jest na VC
-          !member.user.bot // nie bot
-        ) {
-          const chance = Math.floor(Math.random() * 1000); // 0 - 999
-          if (chance === 0) {
-            member.voice.disconnect("Losowy wyrzut z szansą 1/1000").then(() => {
-              const channel = client.channels.cache.get(CHANNEL_ID);
-              if (channel) channel.send(`💣 Rozjebano ${member.user.tag}`);
-              console.log(`💣 Rozjebano ${member.user.tag}`);
-            }).catch(err => {
-              console.error(`❌ Błąd przy wyrzucaniu ${member.user.tag}:`, err.message);
-            });
-          }
-        }
-      });
-    });
-  });
-}, 1000); 
 
