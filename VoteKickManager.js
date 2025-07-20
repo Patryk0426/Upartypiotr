@@ -42,7 +42,7 @@ class VoteKickManager {
         }
         try {
           await mentioned.voice.disconnect();
-          message.channel.send(`✅ ${mentioned.user.tag} został rozjebany🤓💣`);
+          message.channel.send(`✅ ${mentioned} został rozjebany🤓💣`);
         } catch (error) {
           console.error('Błąd podczas wyrzucania:', error);
           message.channel.send('❌ Nie udało się wyrzucić użytkownika.');

@@ -16,12 +16,20 @@ class TerminalInterface {
 
     rl.on('line', (input) => {
       const [cmd, ...args] = input.split(' ');
+
       if (cmd === 'play') {
         const [vcId, fileName] = args;
         const filePath = path.join(__dirname, 'sounds', fileName);
         this.voiceManager.playToChannel(this.client, vcId, filePath);
+
       } else if (cmd === 'ping') {
         console.log('Pong!');
+
+      } else if (cmd === 'exit') {
+        console.log('wyłaczam');
+        process.exit(0);
+        
+
       } else {
         console.log('Nieznana komenda.');
       }
