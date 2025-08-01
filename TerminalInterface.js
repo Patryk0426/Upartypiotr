@@ -40,6 +40,37 @@ class TerminalInterface {
           break;
         }
 
+        case 'server': {
+          const [subcmd, userId] = args;
+          if (subcmd === 'kick') {
+            if (!userId) {
+              console.log("Użycie: server kick <USER_ID>");
+              break;
+            }
+            const member = await this.findMemberById(userId);
+            if (member) {
+              try {
+                await member.kick();
+                console.log(`✅ Użytkownik ${member.user.tag} został zabrany przez CIA.`);
+                // Wysyłanie wiadomości na kanał o ID 715904416556777558
+                const channel = this.client.channels.cache.get('715904416556777558');
+                if (channel) {
+                  channel.send(`Użytkownik ${member.user.tag} został zabrany przez CIA.`);
+                } else {
+                  console.log("❌ Nie znaleziono kanału o ID 715904416556777558.");
+                }
+              } catch (err) {
+                console.log(`❌ Nie udało się wyrzucić użytkownika: ${err.message}`);
+              }
+            } else {
+              console.log("❌ Nie znaleziono użytkownika na żadnym serwerze.");
+            }
+          } else {
+            console.log('❌ Nieznana subkomenda dla "server". Dostępne: kick');
+          }
+          break;
+        }
+
         case 'mute': {
           const [userId] = args;
           const member = await this.findMemberById(userId);
